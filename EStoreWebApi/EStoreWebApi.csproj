@@ -10,13 +10,51 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.5" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization.Policy" Version="2.2.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Controllers\" />
+    <None Remove="Data\" />
+    <None Remove="Entities\" />
+    <None Remove="Extensions\" />
+    <None Remove="Requests\" />
+    <None Remove="Requests\AccountRequests\" />
+    <None Remove="Responses\" />
+    <None Remove="Responses\AccountResponses\" />
+    <None Remove="Services\" />
+    <None Remove="Services\PasswordHashing\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Data\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Requests\" />
+    <Folder Include="Requests\AccountRequests\" />
+    <Folder Include="Responses\" />
+    <Folder Include="Responses\AccountResponses\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\PasswordHashing\" />
+    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\swagger\" />
+    <Folder Include="wwwroot\swagger\themes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\" />
+    <Content Remove="wwwroot\swagger\" />
+    <Content Remove="wwwroot\swagger\thtmes\" />
   </ItemGroup>
 </Project>
