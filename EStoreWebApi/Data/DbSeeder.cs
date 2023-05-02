@@ -1,18 +1,20 @@
-﻿using System;
-using System.Linq;
-using Bogus;
-using EStoreWebApi.Entities;
+﻿using Bogus;
 using EStoreWebApi.Extensions;
+using EStoreWebApi.Features.Accounts.Entities;
+using EStoreWebApi.Features.Catalogue.Entities;
+using EStoreWebApi.Shared.Services.PasswordHashing;
 
 namespace EStoreWebApi.Data;
 
 public class DbSeeder
 {
 	private readonly AppDbContext _db;
+    private readonly IPasswordhasher _hasher;
 
-    public DbSeeder(AppDbContext db)
+    public DbSeeder(AppDbContext db, IPasswordhasher hasher)
     {
         _db = db;
+        _hasher = hasher;
     }
 
     public void Seed()
@@ -22,6 +24,16 @@ public class DbSeeder
 
         var faker = new Faker();
 
+        var user = new User()
+        {
+            Email = "wrobert@vous.lu",
+            UserName = "wrobert",
+            PasswordHash = _hasher.HashPassword("secret123"),
+        };
+
+        _db.Users.Add(user);
+        _db.SaveChanges();
+        
         var categories = faker.Commerce.Categories(200)
             .Select(name => new ProductCategory()
             {

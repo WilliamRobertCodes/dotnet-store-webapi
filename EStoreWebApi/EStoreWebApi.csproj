@@ -36,21 +36,18 @@
     <None Remove="Responses\AccountResponses\" />
     <None Remove="Services\" />
     <None Remove="Services\PasswordHashing\" />
+    <None Remove="Requests\ProductRequests\" />
+    <None Remove="Requests\Base\" />
+    <None Remove="Responses\ProductResponses\" />
+    <None Remove="Requests\CartRequests\" />
+    <None Remove="Services\Auth\" />
+    <None Remove="Queries\" />
+    <None Remove="Attributes\" />
+    <None Remove="Responses\CartResponses\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Data\" />
-    <Folder Include="Entities\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Requests\" />
-    <Folder Include="Requests\AccountRequests\" />
-    <Folder Include="Responses\" />
-    <Folder Include="Responses\AccountResponses\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\PasswordHashing\" />
-    <Folder Include="wwwroot\" />
-    <Folder Include="wwwroot\swagger\" />
-    <Folder Include="wwwroot\swagger\themes\" />
+    <Folder Include="Shared\Requests\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\" />
