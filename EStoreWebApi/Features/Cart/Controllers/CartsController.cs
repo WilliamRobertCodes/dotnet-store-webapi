@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EStoreWebApi.Features.Cart.Controllers;
 
 [ApiController]
-[Route("cart")]
+[Route("api/cart")]
 public class CartsController : Controller
 {
     private readonly AppDbContext _db;

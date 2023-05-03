@@ -3,6 +3,7 @@ using EStoreWebApi.Data;
 using EStoreWebApi.Features.Accounts.Entities;
 using EStoreWebApi.Features.Accounts.Requests;
 using EStoreWebApi.Features.Accounts.Responses;
+using EStoreWebApi.Shared.Responses;
 using EStoreWebApi.Shared.Services.Auth;
 using EStoreWebApi.Shared.Services.PasswordHashing;
 using Microsoft.AspNetCore.Authentication;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EStoreWebApi.Features.Accounts.Controllers;
 
 [ApiController]
-[Route("accounts")]
+[Route("api/accounts")]
 public class AccountsController : Controller
 {
 	private readonly AppDbContext _db;
@@ -31,9 +32,6 @@ public class AccountsController : Controller
     [ProducesResponseType(200, Type = typeof(AuthResponse))]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
         if (user is null || _hasher.VerifyPassword(request.Password, user.PasswordHash) is false)
@@ -48,15 +46,12 @@ public class AccountsController : Controller
     [ProducesResponseType(200, Type = typeof(AuthResponse))]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
     {
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         var userExists = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
         if (userExists is not null)
         {
             ModelState.AddModelError("email", "This email is already in use");
-            return UnprocessableEntity(ModelState);
+            return UnprocessableEntity(ErrorResponse.Make(ModelState));
         }
 
         var newUser = new User()
@@ -94,6 +89,7 @@ public class AccountsController : Controller
         {
             IsPersistent = true,
             ExpiresUtc = DateTime.UtcNow.AddHours(2),
+            AllowRefresh = true,
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -116,7 +112,7 @@ public class AccountsController : Controller
     private IActionResult LoginError()
     {
         ModelState.AddModelError("email", "These credentials do not match our records");
-        return UnprocessableEntity(ModelState);
+        return UnprocessableEntity(ErrorResponse.Make(ModelState));
     }
 }
 

@@ -6,5 +6,5 @@ namespace EStoreWebApi.Features.Catalogue.Requests;
 public class ListProductsRequest : PaginatedRequest
 {
     [FromQuery(Name = "productCategories")]
-    public List<int> ProductCategories { get; set; } = new();
+    public List<int> CategoriesIds { get; set; } = new();
 }

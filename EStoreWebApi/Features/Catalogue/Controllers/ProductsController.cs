@@ -1,5 +1,4 @@
 ﻿using EStoreWebApi.Data;
-using EStoreWebApi.Features.Catalogue.Entities;
 using EStoreWebApi.Features.Catalogue.Requests;
 using EStoreWebApi.Features.Catalogue.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EStoreWebApi.Features.Catalogue.Controllers;
 
 [ApiController]
-[Route("/products")]
+[Route("api/products")]
 public class ProductsController : Controller
 {
     private readonly AppDbContext _db;
@@ -27,10 +26,13 @@ public class ProductsController : Controller
             .Take(request.PerPage)
             .Skip(request.PerPage * (request.Page - 1))
             .AsQueryable();
-
-        if (request.ProductCategories.Any())
-            query = query.Where(p =>
-                p.ProductCategories.Any(c => request.ProductCategories.Contains(c.Id)));
+        
+        if (request.CategoriesIds.Any())
+        {
+            query = query.Where(product =>
+                product.ProductCategories.Any(
+                    category => request.CategoriesIds.Contains(category.Id)));
+        }
 
         var products = await query
             .AsNoTracking()
@@ -48,7 +50,7 @@ public class ProductsController : Controller
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id);
 
-        return product is Product
+        return product is not null
             ? Ok(ProductResponse.FromProduct(product))
             : NotFound();
     }

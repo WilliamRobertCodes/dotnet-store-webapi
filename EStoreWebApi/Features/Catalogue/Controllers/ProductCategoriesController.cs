@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EStoreWebApi.Features.Catalogue.Controllers;
 
 [ApiController]
-[Route("product-categories")]
+[Route("api/product-categories")]
 public class ProductCategoriesController : Controller
 {
 	private readonly AppDbContext _db;
