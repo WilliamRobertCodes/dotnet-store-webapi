@@ -15,7 +15,7 @@ public class CartLineItem : TimestampedEntity
 
     public Product Product { get; set; }
 
-    public uint Quantity { get; private set; } = 1;
+    public uint Quantity { get; private set; }
 
     public void UpdateQuantity(uint newQuantity)
     {

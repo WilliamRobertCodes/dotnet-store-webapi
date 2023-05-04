@@ -1,6 +1,12 @@
-﻿using EStoreWebApi.Features.Catalogue.Entities;
+﻿using Bogus;
+using EStoreWebApi.Features.Catalogue.Entities;
+using EStoreWebApi.Shared.Requests.Base;
+using EStoreWebApi.Shared.Responses;
 
 namespace EStoreWebApi.Features.Catalogue.Responses;
+
+public class PaginatedProductResponse : PaginatedResponse<ProductResponse>
+{ }
 
 public class ProductCategoryResponse
 {

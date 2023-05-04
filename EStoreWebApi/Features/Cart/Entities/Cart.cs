@@ -14,15 +14,39 @@ public class Cart : BaseEntity, IAggregateRoot
 
     public uint TotalPriceInCents => (uint)CartLineItems.Sum(i => i.TotalPriceInCents);
 
-    public void Update(Product product, uint newQuantity)
+    public void UpdateProduct(Product product, uint newQuantity)
     {
         GetOrCreateLineItem(product)
             .UpdateQuantity(newQuantity);
     }
 
+    public void AddProduct(Product product, uint quantity)
+    {
+        var item = GetOrCreateLineItem(product);
+        
+        item.UpdateQuantity(item.Quantity + quantity);
+    }
+
+    public void RemoveProduct(Product product)
+    {
+        var item = GetLineItem(product);
+        
+        if (item is null)
+        {
+            return;
+        }
+
+        CartLineItems.Remove(item);
+    }
+
+    private CartLineItem? GetLineItem(Product product)
+    {
+        return CartLineItems.Where(item => item.ProductId == product.Id).FirstOrDefault();
+    }
+
     private CartLineItem GetOrCreateLineItem(Product product)
     {
-        var lineItem = CartLineItems.Where(item => item.ProductId == product.Id).FirstOrDefault();
+        var lineItem = GetLineItem(product);
 
         if (lineItem is null)
         {

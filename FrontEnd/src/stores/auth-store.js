@@ -1,8 +1,11 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
 import { api } from "@/utils/api";
+import {useCartStore} from "@/stores/cart-store";
 
 export const useAuthStore = defineStore("auth", () => {
+    const cartStore = useCartStore();
+    
     const user = ref(null);
     const authenticated = computed(() => !!user.value);
 
@@ -12,6 +15,8 @@ export const useAuthStore = defineStore("auth", () => {
                 credentials: 'include',
             })
             .json()
+        
+        cartStore.fetchCart();
 
         if (response.user) {
             user.value = response.user;
@@ -30,6 +35,8 @@ export const useAuthStore = defineStore("auth", () => {
                 .json();
             
             user.value = response.user;
+
+            cartStore.fetchCart();
             
             return {
                 success: true,
@@ -58,6 +65,8 @@ export const useAuthStore = defineStore("auth", () => {
                 .json();
 
             user.value = response.user;
+
+            cartStore.fetchCart();
 
             return { 
                 success: true,

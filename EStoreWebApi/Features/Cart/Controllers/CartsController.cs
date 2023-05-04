@@ -5,6 +5,7 @@ using EStoreWebApi.Features.Cart.Responses;
 using EStoreWebApi.Shared.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace EStoreWebApi.Features.Cart.Controllers;
@@ -33,7 +34,7 @@ public class CartsController : Controller
     }
 
     [Authorize]
-    [HttpPost("add")]
+    [HttpPost("items")]
     [ProducesResponseType(200, Type = typeof(CartResponse))]
     public async Task<IActionResult> AddToCart(AddToCartRequest request)
     {
@@ -44,7 +45,45 @@ public class CartsController : Controller
 
         var cart = await GetCartAsync();
 
-        cart.Update(product, request.Quantity);
+        cart.AddProduct(product, request.Quantity);
+
+        await _db.SaveChangesAsync();
+
+        return Ok(CartResponse.FromCart(cart));
+    }
+
+    [Authorize]
+    [HttpPut("items")]
+    [ProducesResponseType(200, Type = typeof(CartResponse))]
+    public async Task<IActionResult> UpdateCart(AddToCartRequest request)
+    {
+        var product = await _db.Products.FindAsync(request.ProductId);
+
+        if (product is null)
+            return NotFound();
+
+        var cart = await GetCartAsync();
+
+        cart.UpdateProduct(product, request.Quantity);
+
+        await _db.SaveChangesAsync();
+
+        return Ok(CartResponse.FromCart(cart));
+    }
+
+    [Authorize]
+    [HttpDelete("items")]
+    [ProducesResponseType(200, Type = typeof(CartResponse))]
+    public async Task<IActionResult> RemoveProduct([FromQuery] RemoveProductRequest request)
+    {
+        var product = await _db.Products.FindAsync(request.ProductId);
+
+        if (product is null)
+            return NotFound();
+
+        var cart = await GetCartAsync();
+        
+        cart.RemoveProduct(product);
 
         await _db.SaveChangesAsync();
 

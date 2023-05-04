@@ -24,6 +24,8 @@ public class CartResponse
 public class CartLineItemResponse
 {
     public uint Quantity { get; set; }
+    
+    public uint LineItemPriceInCents { get; set; }
 
     public CartProductResponse Product { get; set; }
 
@@ -32,6 +34,7 @@ public class CartLineItemResponse
         return new CartLineItemResponse()
         {
             Quantity = lineItem.Quantity,
+            LineItemPriceInCents = lineItem.TotalPriceInCents,
             Product = CartProductResponse.FromProduct(lineItem.Product),
         };
     }
@@ -39,6 +42,8 @@ public class CartLineItemResponse
 
 public class CartProductResponse
 {
+    public int Id { get; set; }
+    
     public string Name { get; set; }
 
     public string Description { get; set; }
@@ -49,6 +54,7 @@ public class CartProductResponse
     {
         return new CartProductResponse()
         {
+            Id = product.Id,
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
