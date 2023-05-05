@@ -7,7 +7,7 @@ import AppButton from "@/components/AppButton.vue";
 const products = ref(null);
 const page = ref(1);
 
-watch(page, fetchProducts, {immediate: true})
+watch(page, fetchProducts, {immediate: true});
 
 function fetchProducts() {
     const options = { 

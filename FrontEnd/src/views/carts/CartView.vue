@@ -26,7 +26,7 @@ const onQuantityChange = ($event, productId) => {
                     </RouterLink>
                 </div>
             </div>
-            <div v-else class="grid grid-cols-[1fr_320px] gap-4">
+            <div v-else class="grid grid-cols-[1fr_320px] items-start gap-4">
                 <div class="overflow-hidden border rounded">
                     <article v-for="item in cartStore.cart.cartLineItems" :key="item.id" class="flex justify-between p-4 border-b transition last:border-0 hover:bg-gray-50">
                         <div>

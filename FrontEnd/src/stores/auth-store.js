@@ -88,11 +88,19 @@ export const useAuthStore = defineStore("auth", () => {
         }
     }
     
+    async function logout() {
+        await api.post('accounts/logout').json();
+        
+        user.value = null;
+        cartStore.dumpCart();
+    }
+    
     return { 
         user, 
         authenticated,
         authenticate,
         logIn, 
-        signUp, 
+        signUp,
+        logout,
     };
 });

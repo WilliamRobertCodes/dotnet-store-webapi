@@ -2,13 +2,14 @@
 using EStoreWebApi.Extensions;
 using EStoreWebApi.Features.Accounts.Entities;
 using EStoreWebApi.Features.Catalogue.Entities;
+using EStoreWebApi.Shared.Entities;
 using EStoreWebApi.Shared.Services.PasswordHashing;
 
 namespace EStoreWebApi.Data;
 
 public class DbSeeder
 {
-	private readonly AppDbContext _db;
+    private readonly AppDbContext _db;
     private readonly IPasswordhasher _hasher;
 
     public DbSeeder(AppDbContext db, IPasswordhasher hasher)
@@ -33,7 +34,7 @@ public class DbSeeder
 
         _db.Users.Add(user);
         _db.SaveChanges();
-        
+
         var categories = faker.Commerce.Categories(200)
             .Select(name => new ProductCategory()
             {
@@ -54,7 +55,7 @@ public class DbSeeder
                 {
                     Name = faker.Commerce.ProductName(),
                     Description = faker.Commerce.ProductDescription(),
-                    Price = (uint) new Random().Next(500, 50_000),
+                    Price = (uint)new Random().Next(500, 50_000),
                     ProductCategories = new List<ProductCategory>()
                     {
                         categories.GetRandomElement(),
@@ -68,11 +69,18 @@ public class DbSeeder
 
         _db.Products.AddRange(products);
         _db.SaveChanges();
+
+        var countries = new List<Country>()
+        {
+            new() { Name = "Belgium", Code = "BE" },
+            new() { Name = "Luxembourg", Code = "LU" },
+            new() { Name = "Germany", Code = "DE" },
+        };
+
+        _db.Countries.AddRange(countries);
+        _db.SaveChanges();
     }
 
     private bool DbIsPopulated()
-    {
-        return _db.Products.Any()
-            || _db.ProductCategories.Any();
-    }
+        => _db.Products.Any() && _db.Users.Any();
 }

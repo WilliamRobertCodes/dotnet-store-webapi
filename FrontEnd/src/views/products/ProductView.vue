@@ -8,9 +8,11 @@ import Container from "@/components/layout/Container.vue";
 import FormLabel from "@/components/forms/FormLabel.vue";
 import FormInput from "@/components/forms/FormInput.vue";
 import {formatPriceInCents} from "@/utils/misc";
+import {useNotificationsStore, NotificationTypes} from "@/stores/notifications-store";
 
 const route = useRoute();
 const cartStore = useCartStore();
+const notificationsStore = useNotificationsStore();
 
 const product = ref(null);
 const form = reactive({
@@ -32,6 +34,10 @@ const price = computed(() => {
 
 const submit = () => {
     cartStore.addToCart(form);
+    notificationsStore.addNotification({
+        type: NotificationTypes.Success,
+        message: `Product added to cart !`,
+    });
 };
 </script>
 
@@ -42,6 +48,11 @@ const submit = () => {
         </template>
         <div v-else class="w-1/2"> 
             <h1 class="mb-4 text-2xl font-bold">{{ product.name }}</h1>
+            <div v-if="product.productCategories.length" class="flex gap-2 mb-4">
+                <div v-for="category in product.productCategories" :key="category.id" class="py-1 px-2 rounded-full text-xs font-semibold text-white bg-blue-600">
+                    {{ category.name }}
+                </div>
+            </div>
             <p class="mb-4 text-lg font-bold">{{ price }}</p>
             <p class="mb-4">{{ product.description }}</p>
             <form class="space-y-4" @submit.prevent="submit">

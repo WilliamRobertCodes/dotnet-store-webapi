@@ -54,6 +54,10 @@ export const useCartStore = defineStore('cart', () => {
         return cart.value.cartLineItems.length;
     });
     
+    function dumpCart() {
+        cart.value = null;
+    }
+    
     return { 
         cart,
         addingToCart,
@@ -62,5 +66,6 @@ export const useCartStore = defineStore('cart', () => {
         addToCart,
         updateCart,
         removeFromCart,
+        dumpCart,
     };
 });

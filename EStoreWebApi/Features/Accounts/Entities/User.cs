@@ -9,4 +9,6 @@ public class User : TimestampedEntity
     public string UserName { get; set; }
 
     public string PasswordHash { get; set; }
+    
+    public List<UserAddress> UserAddresses { get; set; }
 }

@@ -7,8 +7,10 @@ import AppButton from "@/components/AppButton.vue";
 import FormErrors from "@/components/forms/FormErrors.vue";
 import Card from "@/components/Card.vue";
 import {useAuthStore} from "@/stores/auth-store";
+import {useRouter} from "vue-router";
 
-const {user, logIn} = useAuthStore();
+const authStore = useAuthStore();
+const router = useRouter();
 
 const form = reactive({
     email: '',
@@ -20,10 +22,10 @@ const formErrors = ref({});
 const submit = async () => {
     formErrors.value = {};
 
-    const result = await logIn(form);
+    const result = await authStore.logIn(form);
 
     if (result.success) {
-        console.log('Success!');
+        router.push({ name: 'home' });
     } else {
         formErrors.value = result.errors;
     }
