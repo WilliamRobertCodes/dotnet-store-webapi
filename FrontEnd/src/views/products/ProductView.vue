@@ -9,6 +9,7 @@ import FormLabel from "@/components/forms/FormLabel.vue";
 import FormInput from "@/components/forms/FormInput.vue";
 import {formatPriceInCents} from "@/utils/misc";
 import {useNotificationsStore, NotificationTypes} from "@/stores/notifications-store";
+import Pill from "@/components/Pill.vue";
 
 const route = useRoute();
 const cartStore = useCartStore();
@@ -49,9 +50,9 @@ const submit = () => {
         <div v-else class="w-1/2"> 
             <h1 class="mb-4 text-2xl font-bold">{{ product.name }}</h1>
             <div v-if="product.productCategories.length" class="flex gap-2 mb-4">
-                <div v-for="category in product.productCategories" :key="category.id" class="py-1 px-2 rounded-full text-xs font-semibold text-white bg-blue-600">
+                <Pill v-for="category in product.productCategories" :key="category.id">
                     {{ category.name }}
-                </div>
+                </Pill>
             </div>
             <p class="mb-4 text-lg font-bold">{{ price }}</p>
             <p class="mb-4">{{ product.description }}</p>

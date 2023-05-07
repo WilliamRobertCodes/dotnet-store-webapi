@@ -3,12 +3,13 @@ import {useCartStore} from "@/stores/cart-store";
 import Container from "@/components/layout/Container.vue";
 import AppButton from "@/components/AppButton.vue";
 import {formatPriceInCents} from "@/utils/misc";
+import {RouteNames} from "@/routing/router";
 
 const cartStore = useCartStore();
 
 const onQuantityChange = ($event, productId) => {
     cartStore.updateCart({
-        productId, 
+        productId,
         quantity: $event.target.value,
     });
 }
@@ -21,7 +22,7 @@ const onQuantityChange = ($event, productId) => {
             <div v-if="cartStore.cart.cartLineItems.length === 0" class="space-y-4 flex flex-col items-center py-4">
                 <div class="text-lg text-center font-semibold">Your cart is empty :(</div>
                 <div>
-                    <RouterLink :to="{ name: 'home' }">
+                    <RouterLink :to="{ name: RouteNames.Home }">
                         <AppButton>Go shopping !</AppButton>
                     </RouterLink>
                 </div>
@@ -31,7 +32,7 @@ const onQuantityChange = ($event, productId) => {
                     <article v-for="item in cartStore.cart.cartLineItems" :key="item.id" class="flex justify-between p-4 border-b transition last:border-0 hover:bg-gray-50">
                         <div>
                             <h2 class="pb-2 align-baseline">
-                                <span class="text-lg font-semibold">{{ item.product.name }}</span>&nbsp;<span>x{{ item.quantity }}</span>
+                                <RouterLink :to="{ name: RouteNames.Products_Single, params: { id: item.product.id } }" class="text-lg font-semibold hover:underline">{{ item.product.name }}</RouterLink>&nbsp;<span>x{{ item.quantity }}</span>
                             </h2>
                             <div class="text-sm">
                                 <p>Price per item: {{ formatPriceInCents(item.product.price) }}</p>

@@ -57,7 +57,6 @@ public class AccountsController : Controller
         var newUser = new User()
         {
             Email = request.Email,
-            UserName = request.UserName,
             PasswordHash = _hasher.HashPassword(request.Password),
         };
 

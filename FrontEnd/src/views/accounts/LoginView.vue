@@ -8,6 +8,7 @@ import FormErrors from "@/components/forms/FormErrors.vue";
 import Card from "@/components/Card.vue";
 import {useAuthStore} from "@/stores/auth-store";
 import {useRouter} from "vue-router";
+import {RouteNames} from "@/routing/router";
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -25,7 +26,7 @@ const submit = async () => {
     const result = await authStore.logIn(form);
 
     if (result.success) {
-        router.push({ name: 'home' });
+        router.push({ name: RouteNames.Home });
     } else {
         formErrors.value = result.errors;
     }
@@ -53,6 +54,15 @@ const submit = async () => {
                     <AppButton>Log in</AppButton>
                 </div>
             </form>
+
+            <hr class="my-5">
+            
+            <div class="text-center">
+                <p class="text-sm">
+                    <span>No account ?&nbsp;</span>
+                    <RouterLink :to="{ name: RouteNames.Accounts_Signup }" class="text-blue-700 hover:underline">Sign up</RouterLink>
+                </p>
+            </div>
         </Card>
     </Container>
 </template>

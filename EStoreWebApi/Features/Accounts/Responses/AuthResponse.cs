@@ -10,8 +10,6 @@ public class AuthResponse
         public int Id { get; set; }
 
         public string Email { get; set; }
-
-        public string UserName { get; set; }
     }
 
     public AuthUserResponse? User { get; set; }
@@ -27,7 +25,6 @@ public class AuthResponse
             {
                 Id = user.Id,
                 Email = user.Email,
-                UserName = user.UserName,
             }
         };
     }

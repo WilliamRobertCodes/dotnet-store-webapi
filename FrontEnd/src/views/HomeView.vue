@@ -1,8 +1,10 @@
 <script setup>
 import {ref, watch} from "vue";
 import {api} from "@/utils/api";
+import {RouteNames} from "@/routing/router";
 import Container from "@/components/layout/Container.vue";
 import AppButton from "@/components/AppButton.vue";
+import Pill from "@/components/Pill.vue";
 
 const products = ref(null);
 const page = ref(1);
@@ -32,10 +34,17 @@ function fetchProducts() {
         <template v-else>
             <div class="grid grid-cols-3 gap-4">
                 <div v-for="product in products.data" :key="product.id" class="space-y-3 flex flex-col p-4 border rounded shadow-sm">
-                    <RouterLink :to="{ name: 'products.single', params: { id: product.id }}" class="text-lg font-semibold">{{ product.name }}</RouterLink>
+                    <RouterLink :to="{ name: RouteNames.Products_Single, params: { id: product.id }}" class="text-lg font-semibold mb-0">
+                        {{ product.name }}
+                    </RouterLink>
+                    <div v-if="product.productCategories.length" class="relative -top-1 flex gap-2 mb-4">
+                        <Pill v-for="category in product.productCategories" :key="category.id">
+                            {{ category.name }}
+                        </Pill>
+                    </div>
                     <div class="grow text-sm">{{ product.description }}</div>
                     <div class="flex justify-end">
-                        <RouterLink :to="{ name: 'products.single', params: { id: product.id }}" class="block">
+                        <RouterLink :to="{ name: RouteNames.Products_Single, params: { id: product.id }}" class="block">
                             <AppButton>View product</AppButton>
                         </RouterLink>
                     </div>

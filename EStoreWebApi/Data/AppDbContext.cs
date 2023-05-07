@@ -1,7 +1,6 @@
 ﻿using EStoreWebApi.Features.Accounts.Entities;
 using EStoreWebApi.Features.Cart.Entities;
 using EStoreWebApi.Features.Catalogue.Entities;
-using EStoreWebApi.Features.Orders.Entities;
 using EStoreWebApi.Shared.Entities;
 using EStoreWebApi.Shared.Entities.Base;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartLineItem> CartLineItems => Set<CartLineItem>();
-    public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    public DbSet<Country> Countries => Set<Country>();
+    // public DbSet<Country> Countries => Set<Country>();
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -61,7 +58,7 @@ public class AppDbContext : DbContext
             {
                 Carts.Add(new Cart()
                 {
-                    UserId = user.Id,
+                    User = user,
                 });
             }
 

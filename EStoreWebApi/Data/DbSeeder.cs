@@ -28,7 +28,6 @@ public class DbSeeder
         var user = new User()
         {
             Email = "wrobert@vous.lu",
-            UserName = "wrobert",
             PasswordHash = _hasher.HashPassword("secret123"),
         };
 
@@ -69,7 +68,8 @@ public class DbSeeder
 
         _db.Products.AddRange(products);
         _db.SaveChanges();
-
+        
+        /*
         var countries = new List<Country>()
         {
             new() { Name = "Belgium", Code = "BE" },
@@ -79,6 +79,7 @@ public class DbSeeder
 
         _db.Countries.AddRange(countries);
         _db.SaveChanges();
+        */
     }
 
     private bool DbIsPopulated()

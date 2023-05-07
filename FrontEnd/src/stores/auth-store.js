@@ -3,6 +3,15 @@ import {computed, ref} from "vue";
 import { api } from "@/utils/api";
 import {useCartStore} from "@/stores/cart-store";
 
+const EVENTS_PREFIX = "AuthEvents";
+
+export const AuthEvents = {
+    Authenticated: `${EVENTS_PREFIX}/Authenticated`,
+    LoggedIn: `${EVENTS_PREFIX}/LoggedIn`,
+    SignedUp: `${EVENTS_PREFIX}/SignedUp`,
+    LoggedOut: `${EVENTS_PREFIX}/LoggedOut`,
+};
+
 export const useAuthStore = defineStore("auth", () => {
     const cartStore = useCartStore();
     
@@ -14,13 +23,13 @@ export const useAuthStore = defineStore("auth", () => {
             .get('accounts/me', {
                 credentials: 'include',
             })
-            .json()
+            .json();
         
-        cartStore.fetchCart();
-
-        if (response.user) {
-            user.value = response.user;
-        }
+        user.value = response.user;
+        
+        window.dispatchEvent(new CustomEvent(AuthEvents.Authenticated, {
+            detail: { user: response.user },
+        }));
 
         return {
             success: true,
@@ -36,11 +45,13 @@ export const useAuthStore = defineStore("auth", () => {
             
             user.value = response.user;
 
-            cartStore.fetchCart();
+            window.dispatchEvent(new CustomEvent(AuthEvents.LoggedIn, {
+                detail: { user: response.user },
+            }));
             
             return {
                 success: true,
-                data: response,
+                data: response.user,
             };
         } catch (error) {
             const { status } = error.response ?? null;
@@ -66,7 +77,9 @@ export const useAuthStore = defineStore("auth", () => {
 
             user.value = response.user;
 
-            cartStore.fetchCart();
+            window.dispatchEvent(new CustomEvent(AuthEvents.SignedUp, {
+                detail: { user: response.user },
+            }));
 
             return { 
                 success: true,
@@ -92,7 +105,6 @@ export const useAuthStore = defineStore("auth", () => {
         await api.post('accounts/logout').json();
         
         user.value = null;
-        cartStore.dumpCart();
     }
     
     return { 

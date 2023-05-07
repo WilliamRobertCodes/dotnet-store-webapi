@@ -4,7 +4,7 @@ const { errors } = defineProps(['errors']);
 
 <template>
     <template v-if="errors">
-        <p class="block pt-1.5 text-xs font-semibold text-red-500">
+        <p class="space-y-1 block pt-1.5 text-xs font-semibold text-red-500">
             <template v-if="Array.isArray(errors)">
                 <span class="block" v-for="(error, i) in errors" :key="i">{{ error }}</span>
             </template>

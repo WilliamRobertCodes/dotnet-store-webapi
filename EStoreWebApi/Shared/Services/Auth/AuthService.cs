@@ -33,5 +33,25 @@ public class AuthService
 
         return user;
     }
+    
+    public async Task<User> RequiredUserAsync()
+    {
+        var context = _contextAccessor.HttpContext;
+
+        var claim = context.User?.FindFirst(c => c.Type == ClaimTypes.Name);
+
+        if (claim is null)
+            throw new ArgumentNullException(nameof(claim));
+
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == claim.Value);
+
+        if (user is null)
+        {
+            await context.SignOutAsync();
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        return user;
+    }
 }
 

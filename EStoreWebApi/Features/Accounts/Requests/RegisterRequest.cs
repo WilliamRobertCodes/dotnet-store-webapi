@@ -9,10 +9,6 @@ public class RegisterRequest
     public string Email { get; set; }
 
     [Required]
-    public string UserName { get; set; }
-
-    [Required]
-    [MinLength(8)]
+    [MinLength(8, ErrorMessage = "Your password must be 8 characters long or more.")]
     public string Password { get; set; }
 }
-

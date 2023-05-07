@@ -21,7 +21,7 @@ public class PaginationResponse
 
     public int? NextPage => Page + 1 > NumberOfPages ? null : Page + 1;
 
-    public double NumberOfPages => Math.Floor(TotalCount / (float)PerPage);
+    public double NumberOfPages => Math.Ceiling(TotalCount / (float)PerPage);
 
     public static PaginationResponse FromRequest(PaginatedRequest request, int count)
     {
