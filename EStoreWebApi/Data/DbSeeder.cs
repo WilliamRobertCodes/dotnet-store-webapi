@@ -69,7 +69,6 @@ public class DbSeeder
         _db.Products.AddRange(products);
         _db.SaveChanges();
         
-        /*
         var countries = new List<Country>()
         {
             new() { Name = "Belgium", Code = "BE" },
@@ -79,7 +78,6 @@ public class DbSeeder
 
         _db.Countries.AddRange(countries);
         _db.SaveChanges();
-        */
     }
 
     private bool DbIsPopulated()

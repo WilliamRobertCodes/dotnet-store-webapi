@@ -7,8 +7,8 @@ defineProps({
     loading: {
         default: false,
         required: false,
-    },
-})
+    }
+});
 </script>
 
 <template>

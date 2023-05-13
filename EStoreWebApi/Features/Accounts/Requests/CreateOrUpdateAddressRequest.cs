@@ -2,10 +2,8 @@
 
 namespace EStoreWebApi.Features.Accounts.Requests;
 
-public class CreateAddressRequest
+public class CreateOrUpdateAddressRequest
 {
-    public bool IsFavoriteAddress { get; set; }
- 
     [Required]
     public string FirstName { get; set; }
 
@@ -14,12 +12,13 @@ public class CreateAddressRequest
     
     public string? CompanyName { get; set; }
     
-    public string? PhoneNumber { get; set; }
-
     [Required]
     public string Street1 { get; set; }
     
     public string? Street2 { get; set; }
+    
+    [Required]
+    public string City { get; set; }
 
     [Required]
     public string ZipCode { get; set; }

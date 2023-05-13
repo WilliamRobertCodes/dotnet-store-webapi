@@ -22,7 +22,7 @@ function logout() {
 
             <div class="text-sm">
                 <div v-if="authStore.user" class="grid grid-flow-col items-center gap-2">
-                    <div>Welcome, {{ authStore.user.userName }}</div>
+                    <div>Welcome, <RouterLink :to="{ name: RouteNames.Accounts_User }">{{ authStore.user.email }}</RouterLink></div>
                     <RouterLink :to="{ name: RouteNames.Cart }" class="relative z-10 w-6 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="stroke-slate-800" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>

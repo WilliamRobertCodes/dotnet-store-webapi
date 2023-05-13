@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+
 namespace EStoreWebApi.Extensions;
 
 public static class EnumerableExtensions
@@ -12,6 +14,11 @@ public static class EnumerableExtensions
             return default(T);
 
         return list.ElementAt(random.Next(list.Count()));
+    }
+
+    public static bool IsEmpty<T>(this IEnumerable<T> list)
+    {
+        return list.Count() == 0;
     }
 }
 
