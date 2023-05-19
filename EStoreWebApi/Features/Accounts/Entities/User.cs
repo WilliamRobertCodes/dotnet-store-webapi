@@ -13,6 +13,8 @@ public class User : TimestampedEntity
 
     public string? LastName { get; set; }
     
+    public string? StripeCustomerId { get; set; }
+    
     public List<UserAddress> UserAddresses { get; set; }
 
     [NotMapped]

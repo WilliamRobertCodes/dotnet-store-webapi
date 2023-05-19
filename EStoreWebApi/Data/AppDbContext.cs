@@ -1,6 +1,7 @@
 ﻿using EStoreWebApi.Features.Accounts.Entities;
 using EStoreWebApi.Features.Cart.Entities;
 using EStoreWebApi.Features.Catalogue.Entities;
+using EStoreWebApi.Features.Orders.Entities;
 using EStoreWebApi.Shared.Entities;
 using EStoreWebApi.Shared.Entities.Base;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,5 @@
 ﻿using EStoreWebApi.Data;
+using EStoreWebApi.Features.Orders.Services;
 using EStoreWebApi.Shared.Services.Auth;
 using EStoreWebApi.Shared.Services.PasswordHashing;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -75,6 +76,12 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IPasswordhasher, BCryptPasswordHasher>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddTransient<StripeService>(services =>
+{
+    var stripeConfig = builder.Configuration.GetRequiredSection("Stripe");
+    
+    return new StripeService(stripeConfig["ApiKey"]);
+});
 
 var app = builder.Build();
 
