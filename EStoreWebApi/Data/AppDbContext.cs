@@ -19,6 +19,9 @@ public class AppDbContext : DbContext
     
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartLineItem> CartLineItems => Set<CartLineItem>();
+
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     
     public DbSet<Country> Countries => Set<Country>();
     

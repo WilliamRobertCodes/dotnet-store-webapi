@@ -1,8 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import {authenticatedGuard} from "@/routing/guards";
-import ProfileView from "@/views/accounts/user/ProfileView.vue";
-import AddressesView from "@/views/accounts/user/AddressesView.vue";
 
 const RouteNames = Object.freeze({
     Home: 'home',
@@ -49,14 +47,14 @@ const router = createRouter({
                 {
                     path: 'profile',
                     name: RouteNames.Accounts_User_Profile,
-                    component: ProfileView,
+                    component: () => import('../views/accounts/user/ProfileView.vue'),
                 },
                 {
                     path: 'addresses',
                     name: RouteNames.Accounts_User_Addresses,
-                    component: AddressesView,
-                }
-            ]
+                    component: () => import('../views/accounts/user/AddressesView.vue'),
+                },
+            ],
         },
         {
             path: '/products/:id',

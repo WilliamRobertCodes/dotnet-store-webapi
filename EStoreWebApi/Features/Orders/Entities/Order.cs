@@ -10,7 +10,7 @@ public enum OrderStatus
     Shipped,
     Received,
     Returning,
-    Returned,
+    Returned
 }
 
 public class Order : TimestampedEntity
@@ -36,4 +36,6 @@ public class Order : TimestampedEntity
     public string AddressCountryName { get; set; } = null!;
 
     public List<OrderItem> OrderItems { get; set; } = new();
+    
+    public int TotalPriceInCents => OrderItems.Sum(i => i.TotalPriceInCents);
 }

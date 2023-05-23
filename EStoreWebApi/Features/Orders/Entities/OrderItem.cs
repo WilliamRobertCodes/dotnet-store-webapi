@@ -9,12 +9,12 @@ public class OrderItem : BaseEntity
     public Order Order { get; set; } = null!;
 
     public string ItemName { get; set; } = null!;
-    
+
     public uint Quantity { get; set; }
 
     public int TotalPriceInCents { get; set; }
 
     public int UnitPriceInCents { get; set; }
-    
+
     public int ProductId { get; set; }
 }

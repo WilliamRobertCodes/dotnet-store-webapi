@@ -1,47 +1,57 @@
 using EStoreWebApi.Features.Accounts.Entities;
 using EStoreWebApi.Features.Orders.Entities;
+using EStoreWebApi.Features.Orders.Extensions;
+using Microsoft.Extensions.Options;
 using Stripe;
-using Stripe.Checkout;
 
 namespace EStoreWebApi.Features.Orders.Services;
 
 public class StripeService
 {
-    public StripeService(string apiKey)
+    private readonly List<string> _allowedPaymentMethods = new() { "card" };
+    private readonly CustomerService _customerService;
+    private readonly PaymentIntentService _paymentIntentService;
+
+    public StripeService(IOptions<AppStripeConfiguration> config)
     {
-        StripeConfiguration.ApiKey = apiKey;
+        Stripe.StripeConfiguration.ApiKey = config.Value.SecretKey;
+
+        _customerService = new CustomerService();
+        _paymentIntentService = new PaymentIntentService();
     }
-    
-    public async Task<Session> CreateCheckoutSession(User user, Order order)
+
+    public async Task<PaymentIntent> CreatePaymentIntentAsync(User user, Order order)
     {
         var customer = await GetStripeCustomer(user);
 
-        var options = new PriceCreateOptions
+        var options = new PaymentIntentCreateOptions
         {
-            Currency = "usd",
-            UnitAmount = 1000,
-            Product = "{{PRODUCT_ID}}",
+            Amount = order.TotalPriceInCents,
+            Currency = "eur",
+            PaymentMethodTypes = _allowedPaymentMethods,
+            Metadata = order.ToStripeMetadata(),
+            Customer = customer.Id
         };
-        var service = new PriceService();
-        service.Create(options);
+
+        return await _paymentIntentService.CreateAsync(options);
     }
 
     private async Task<Customer> GetStripeCustomer(User user)
     {
-        var customerService = new CustomerService();
-
         if (user.StripeCustomerId is null)
         {
-            return await customerService.CreateAsync(new CustomerCreateOptions()
+            var options = new CustomerCreateOptions
             {
                 Email = user.Email,
-                Metadata = new()
+                Metadata = new Dictionary<string, string>
                 {
                     { "eStoreApiId", user.Id.ToString() }
-                },
-            });
+                }
+            };
+
+            return await _customerService.CreateAsync(options);
         }
 
-        return await customerService.GetAsync(user.StripeCustomerId);
+        return await _customerService.GetAsync(user.StripeCustomerId);
     }
 }

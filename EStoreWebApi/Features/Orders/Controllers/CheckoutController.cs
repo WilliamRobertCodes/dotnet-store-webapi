@@ -1,13 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using EStoreWebApi.Data;
-using EStoreWebApi.Features.Cart.Queries;
-using EStoreWebApi.Features.Orders.Entities;
+using EStoreWebApi.Features.Orders.Requests;
+using EStoreWebApi.Features.Orders.Response;
 using EStoreWebApi.Features.Orders.Services;
 using EStoreWebApi.Shared.Responses;
 using EStoreWebApi.Shared.Services.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 
 namespace EStoreWebApi.Features.Orders.Controllers;
 
@@ -15,10 +13,9 @@ namespace EStoreWebApi.Features.Orders.Controllers;
 [Route("api/checkout")]
 public class CheckoutController : Controller
 {
-    private readonly AppDbContext _db;
     private readonly AuthService _auth;
+    private readonly AppDbContext _db;
     private readonly StripeService _stripe;
-
 
     public CheckoutController(AppDbContext db, AuthService auth, StripeService stripe)
     {
@@ -26,67 +23,34 @@ public class CheckoutController : Controller
         _auth = auth;
         _stripe = stripe;
     }
-    
-    public class CheckoutRequest
-    {
-        [Required]
-        public int AddressId { get; set; }
-    }
 
-    [HttpPost]
-    public async Task<IActionResult> Checkout(CheckoutRequest request)
+    [HttpPost("create-payment-intent")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreatePaymentIntentResponse))]
+    public async Task<IActionResult> CreatePaymentIntent(CheckoutRequest request)
     {
         var user = await _auth.RequiredUserAsync();
-        var address = await _db.UserAddresses
-            .Include(address => address.Country)
-            .Where(address => address.Id == request.AddressId)
-            .Where(address => address.UserId == user.Id)
+        var order = await _db.Orders
+            .Include(o => o.OrderItems)
+            .Where(o => o.UserId == user.Id)
+            .Where(o => o.Id == request.OrderId)
             .FirstOrDefaultAsync();
 
-        if (address is null)
-            return HandleNullAddress(request);
+        if (order is null)
+            return HandleOrderIsNull(order.Id);
 
-        var cart = await CartAggregateQuery.ForUser(_db, user.Id)
-            .FirstOrDefaultAsync();
+        var paymentIntent = await _stripe.CreatePaymentIntentAsync(user, order);
         
-        if (cart is null)
-            return HandleEmptyCart();
+        await _db.Orders.AddAsync(order);
+        await _db.SaveChangesAsync();
 
-        var order = new Order()
-        {
-            UserId = user.Id,
-            Status = OrderStatus.PaymentPending,
-            AddressFirstName = address.FirstName,
-            AddressLastName = address.LastName,
-            AddressCompanyName = address.CompanyName,
-            AddressStreet1 = address.Street1,
-            AddressStreet2 = address.Street2,
-            AddressCity = address.City,
-            AddressZipCode = address.ZipCode,
-            AddressCountryName = address.Country.Name,
-            OrderItems = cart.CartLineItems.Select(item => new OrderItem()
-            {
-                ItemName = item.Product.Name,
-                Quantity = item.Quantity,
-                TotalPriceInCents = (int) item.TotalPriceInCents,
-                ProductId = item.ProductId,
-            }).ToList(),
-        };
-
-        return Ok(order);
+        return Ok(new CreatePaymentIntentResponse(order, paymentIntent));
     }
 
-    private IActionResult HandleEmptyCart()
+    private IActionResult HandleOrderIsNull(int orderId)
     {
-        ModelState.AddModelError("Cart", "User's cart is empty.");
-        return BadRequest(ErrorResponse.Make(ModelState));
-    }
+        var message = $"Order with id {orderId} does not exist, or does not belong the authenticated user.";
 
-    private IActionResult HandleNullAddress(CheckoutRequest request)
-    {
-        var message = $"Address with id {request.AddressId} does not exist, or does not belong the authenticated user.";
-        
-        ModelState.AddModelError("AddressId", message);
+        ModelState.AddModelError("OrderId", message);
         return UnprocessableEntity(ErrorResponse.Make(ModelState));
     }
 }

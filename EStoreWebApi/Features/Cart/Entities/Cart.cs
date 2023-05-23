@@ -39,6 +39,11 @@ public class Cart : BaseEntity, IAggregateRoot
         CartLineItems.Remove(item);
     }
 
+    public void RemoveAllProducts()
+    {
+        CartLineItems.RemoveAll(item => true);
+    }
+
     private CartLineItem? GetLineItem(Product product)
     {
         return CartLineItems.Where(item => item.ProductId == product.Id).FirstOrDefault();
