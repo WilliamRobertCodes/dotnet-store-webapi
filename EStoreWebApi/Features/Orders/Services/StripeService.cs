@@ -1,6 +1,7 @@
+using EStoreWebApi.Data;
 using EStoreWebApi.Features.Accounts.Entities;
 using EStoreWebApi.Features.Orders.Entities;
-using EStoreWebApi.Features.Orders.Extensions;
+using EStoreWebApi.Features.Orders.Services.Options;
 using Microsoft.Extensions.Options;
 using Stripe;
 
@@ -8,14 +9,15 @@ namespace EStoreWebApi.Features.Orders.Services;
 
 public class StripeService
 {
-    private readonly List<string> _allowedPaymentMethods = new() { "card" };
+    private readonly AppDbContext _db;
     private readonly CustomerService _customerService;
     private readonly PaymentIntentService _paymentIntentService;
 
-    public StripeService(IOptions<AppStripeConfiguration> config)
+    public StripeService(IOptions<AppStripeConfiguration> config, AppDbContext db)
     {
-        Stripe.StripeConfiguration.ApiKey = config.Value.SecretKey;
+        StripeConfiguration.ApiKey = config.Value.SecretKey;
 
+        _db = db;
         _customerService = new CustomerService();
         _paymentIntentService = new PaymentIntentService();
     }
@@ -24,34 +26,34 @@ public class StripeService
     {
         var customer = await GetStripeCustomer(user);
 
-        var options = new PaymentIntentCreateOptions
-        {
-            Amount = order.TotalPriceInCents,
-            Currency = "eur",
-            PaymentMethodTypes = _allowedPaymentMethods,
-            Metadata = order.ToStripeMetadata(),
-            Customer = customer.Id
-        };
+        var options = new AppPaymentIntentCreateOptions(order, customer);
 
         return await _paymentIntentService.CreateAsync(options);
     }
 
     private async Task<Customer> GetStripeCustomer(User user)
     {
-        if (user.StripeCustomerId is null)
+        if (user.HasStripeCustomer)
         {
-            var options = new CustomerCreateOptions
-            {
-                Email = user.Email,
-                Metadata = new Dictionary<string, string>
-                {
-                    { "eStoreApiId", user.Id.ToString() }
-                }
-            };
-
-            return await _customerService.CreateAsync(options);
+            return await CreateStripeCustomerForUser(user);
         }
 
         return await _customerService.GetAsync(user.StripeCustomerId);
+    }
+
+    private async Task<Customer> CreateStripeCustomerForUser(User user)
+    {
+        var options = new AppCustomerCreateOptions(user);
+
+        var customer = await _customerService.CreateAsync(options);
+
+        await using (var transaction = await _db.Database.BeginTransactionAsync())
+        {
+            user.StripeCustomerId = customer.Id;
+
+            await transaction.CommitAsync();
+        }
+
+        return customer;
     }
 }

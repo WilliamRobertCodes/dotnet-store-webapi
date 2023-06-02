@@ -10,6 +10,8 @@ public class AuthService
 {
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly AppDbContext _db;
+    
+    private User? User { get; set; }
 
     public AuthService(IHttpContextAccessor contextAccessor, AppDbContext db)
     {
@@ -19,6 +21,9 @@ public class AuthService
 
     public async Task<User?> UserAsync()
     {
+        if (User is not null)
+            return User;
+
         var context = _contextAccessor.HttpContext;
 
         var claim = context.User?.FindFirst(c => c.Type == ClaimTypes.Name);
@@ -26,16 +31,19 @@ public class AuthService
         if (claim is null)
             return null;
 
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == claim.Value);
+        User = await _db.Users.FirstOrDefaultAsync(u => u.Email == claim.Value);
 
-        if (user is null)
+        if (User is null)
             await context.SignOutAsync();
 
-        return user;
+        return User;
     }
     
     public async Task<User> RequiredUserAsync()
     {
+        if (User is not null)
+            return User;
+        
         var context = _contextAccessor.HttpContext;
 
         var claim = context.User?.FindFirst(c => c.Type == ClaimTypes.Name);
@@ -43,15 +51,15 @@ public class AuthService
         if (claim is null)
             throw new ArgumentNullException(nameof(claim));
 
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == claim.Value);
+        User = await _db.Users.FirstOrDefaultAsync(u => u.Email == claim.Value);
 
-        if (user is null)
+        if (User is null)
         {
             await context.SignOutAsync();
-            throw new ArgumentNullException(nameof(user));
+            throw new ArgumentNullException(nameof(User));
         }
 
-        return user;
+        return User;
     }
 }
 

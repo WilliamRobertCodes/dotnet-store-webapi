@@ -4,12 +4,14 @@ using EStoreWebApi.Features.Orders.Response;
 using EStoreWebApi.Features.Orders.Services;
 using EStoreWebApi.Shared.Responses;
 using EStoreWebApi.Shared.Services.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EStoreWebApi.Features.Orders.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/checkout")]
 public class CheckoutController : Controller
 {

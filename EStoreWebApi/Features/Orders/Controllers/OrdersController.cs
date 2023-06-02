@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EStoreWebApi.Features.Orders.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/orders")]
 public class OrdersController : Controller
 {
@@ -24,7 +25,6 @@ public class OrdersController : Controller
         _auth = auth;
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
     {

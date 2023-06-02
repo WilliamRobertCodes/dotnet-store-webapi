@@ -20,4 +20,6 @@ public class User : TimestampedEntity
     [NotMapped]
     public bool InfosCompleted =>
         FirstName is not null && LastName is not null;
+    
+    public bool HasStripeCustomer => StripeCustomerId is not null;
 }

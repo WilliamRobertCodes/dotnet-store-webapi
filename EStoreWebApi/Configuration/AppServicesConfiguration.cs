@@ -9,11 +9,11 @@ public static class AppServicesConfiguration
 {
     public static void ConfigureAppServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        builder.Services.AddTransient<IPasswordhasher, BCryptPasswordHasher>();
-        builder.Services.AddTransient<AuthService>();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddSingleton<IPasswordhasher, BCryptPasswordHasher>();
+        builder.Services.AddScoped<AuthService>();
         builder.Services.AddDbContext<AppDbContext>();
         builder.Services.Configure<AppStripeConfiguration>(builder.Configuration.GetSection("Stripe"));
-        builder.Services.AddTransient<StripeService>();
+        builder.Services.AddScoped<StripeService>();
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EStoreWebApi.Features.Accounts.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/accounts/addresses")]
 public class AddressesController : Controller
 {
@@ -23,9 +24,7 @@ public class AddressesController : Controller
         _db = db;
         _auth = auth;
     }
-    
-    
-    [Authorize]
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<AddressResponse>))]
     public async Task<IActionResult> ListAddresses()
@@ -41,7 +40,6 @@ public class AddressesController : Controller
         return Ok(addresses.Select(AddressResponse.FromAddress));
     }
 
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddressResponse))]
     public async Task<IActionResult> CreateAddress(CreateOrUpdateAddressRequest request)
@@ -61,15 +59,8 @@ public class AddressesController : Controller
             return UnprocessableEntity(ErrorResponse.Make(ModelState));
         }
 
-        if (user.FirstName is null)
-        {
-            user.FirstName = request.FirstName;
-        }
-        
-        if (user.LastName is null)
-        {
-            user.LastName = request.LastName;
-        }
+        user.FirstName ??= request.FirstName;
+        user.LastName ??= request.LastName;
         
         var address = new UserAddress()
         {
@@ -91,7 +82,6 @@ public class AddressesController : Controller
         return Ok(AddressResponse.FromAddress(address));
     }
 
-    [Authorize]
     [HttpPut("{addressId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddressResponse))]
     public async Task<IActionResult> UpdateAddress(int addressId, CreateOrUpdateAddressRequest request)
@@ -132,7 +122,6 @@ public class AddressesController : Controller
         return Ok(AddressResponse.FromAddress(address));
     }
 
-    [Authorize]
     [HttpDelete("{addressId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteAddress(int addressId)
@@ -153,7 +142,6 @@ public class AddressesController : Controller
         return Ok();
     }
 
-    [Authorize]
     [HttpPut("{addressId}/favorite")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddressResponse))]
     public async Task<IActionResult> FavoriteAddress(int addressId)
